@@ -3,7 +3,12 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-mongoose.connect(ENV.DATABASE_URL, ENV.MONGODB_OPTIONS)
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}
+
+mongoose.connect(ENV.DATABASE_URL, options)
 
 mongoose.connection.on('open', ()=> {console.log('mongodb connected')})
 mongoose.connection.on('close', ()=> {console.log('mongodb closed')})
