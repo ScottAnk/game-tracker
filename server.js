@@ -1,5 +1,6 @@
 const ENV = require('./config/env')
 const express = require('express')
+const mongoose = require('./db/connection')
 
 const app = express()
 
