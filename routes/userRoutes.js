@@ -1,23 +1,28 @@
 const express = require('express')
+const bcrypt = require('bcrypt')
+
+const {createUserToken} = require('../lib/auth')
 const User = require('../model/user')
 
 const router = express.Router()
 
-router.post('/sign-up',(req, res, next)=>{
-  User.create(req.body.user)
-  res.sendStatus('201')
+router.post('/sign-up', (req, res, next) => {
+  bcrypt
+    .hash(req.body.credentials.password, 10)
+    .then((passwordHash) =>
+      User.create({
+        userName: req.body.credentials.userName,
+        passwordHash: passwordHash,
+      })
+    )
+    .then((user) => res.status(201).json(user))
+    .catch(next)
 })
 
-router.post ('/sign-in', (req, res, next) => {
-  User.findOne({userName: req.body.user.userName})
-    .then((user) => {
-      if(user.passwordHash === req.body.user.passwordHash) {
-        res.sendStatus(200)
-      } else {
-        res.sendStatus(422)
-      }
-    })
+router.post('/sign-in', (req, res, next) => {
+  User.findOne({ userName: req.body.credentials.userName })
+    .then((user) => createUserToken(req, user))
+    .then((token) => res.json({ token: token }))
     .catch(next)
-    
 })
 module.exports = router
