@@ -3,18 +3,24 @@ const bcrypt = require('bcrypt')
 
 const {createUserToken} = require('../lib/auth')
 const User = require('../model/user')
+const Collection = require('../model/collection')
 
 const router = express.Router()
 
 router.post('/sign-up', (req, res, next) => {
   bcrypt
     .hash(req.body.credentials.password, 10)
-    .then((passwordHash) =>
-      User.create({
+    .then(async (passwordHash) => {
+      const user = await User.create({
         userName: req.body.credentials.userName,
         passwordHash: passwordHash,
       })
-    )
+      Collection.create({
+        ownerId: user._id,
+        title: 'My Games'
+      })
+      return user
+    })
     .then((user) => res.status(201).json(user))
     .catch(next)
 })
