@@ -31,7 +31,7 @@ This website allows users to quickly set up a profile and create a digital copy 
 
 # Entity Relationships  
 
-In order to satisfy the requirements of the MVP user stories, the app will require three database models User, Collection, and Game. Each User has one Collection (until version two, where multiple collections will be implemented), and collections have an arbitrary number of references to Game documents.  
+In order to satisfy the requirements of the MVP user stories, the app will require three database models User, Collection, and Game. Each User has an array of references to Collection documents, and collections have an array of references to Game documents. Strictly speaking, MVP doesn't require a Collection model, but this is futureproofing with the expectation that multiple collections per user will be implemented.
 ![MVP-entity-relationship-diagram](/readme-images/MVP-entity-relationship-diagram.png)  
 
 
