@@ -3,22 +3,22 @@ const mongoose = require('../db/connection')
 const gameSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   minPlayers: {
     type: Number,
     requred: true,
-    min: 1
+    min: 1,
   },
   maxPlayers: {
     type: Number,
     required: true,
-    min: 1
+    min: 1,
   },
   description: {
     type: String,
-    required: false
-  }
+    required: false,
+  },
 })
 
 const Game = mongoose.model('Game', gameSchema)

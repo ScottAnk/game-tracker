@@ -12,4 +12,3 @@ app.use(userRoutes)
 app.use('/games', gameRoutes)
 
 app.listen(ENV.EXT_PORT, () => console.log(`listening on port ${ENV.EXT_PORT}`))
-
