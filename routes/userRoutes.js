@@ -8,6 +8,8 @@ const Collection = require('../model/collection')
 const router = express.Router()
 
 router.post('/sign-up', (req, res, next) => {
+  // TODO need to check that request includes a user name. 
+  // TODO need to check if username already exists
   bcrypt
     .hash(req.body.credentials.password, 10)
     .then(async (passwordHash) => {
@@ -27,6 +29,7 @@ router.post('/sign-up', (req, res, next) => {
 
 router.post('/sign-in', (req, res, next) => {
   User.findOne({ userName: req.body.credentials.userName })
+    // TODO need to check if a user was found
     .then((user) => createUserToken(req, user))
     .then((token) => res.json({ token: token }))
     .catch(next)
