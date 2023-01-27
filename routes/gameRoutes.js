@@ -8,8 +8,16 @@ const router = express.Router()
 
 //CREATE
 router.post('/', requireToken, (req, res, next) => {
-  Game.create(req.body.game).then(res.sendStatus(205)).catch(next)
-  // TODO send back the results of a new index on the collection or redirect to the main page if I have a persistent login
+  Collection.findOne({ ownerId: req.user._id })
+    .then((collection) => {
+    Game.create(req.body.game)
+      .then((game) => {
+        collection.games.push(game._id)
+        return collection.save()}
+      )
+      .then(res.sendStatus(205))
+      .catch(next)
+  })
 })
 
 //INDEX
