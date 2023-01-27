@@ -8,11 +8,24 @@ const Collection = require('../model/collection')
 const router = express.Router()
 
 router.post('/sign-up', (req, res, next) => {
-  // TODO need to check that request includes a user name.
-  // TODO need to check if username already exists
-  bcrypt
-    .hash(req.body.credentials.password, 10)
+  if (
+    !req.body.credentials ||
+    !req.body.credentials.password ||
+    !req.body.credentials.userName
+  ) {
+    res.status(400).json({ error: 'sign up requires username and password' })
+    throw new Error('breakPromise')
+  }
+  User.findOne({ userName: req.body.credentials.userName })
+    .then((user) => {
+      if (user) {
+        res.status(409).json({ error: 'that username already exists' })
+        throw new Error('breakPromise')
+      }
+    })
+    .then(() => bcrypt.hash(req.body.credentials.password, 10))
     .then(async (passwordHash) => {
+      // TODO this could just be a promise chain
       const user = await User.create({
         userName: req.body.credentials.userName,
         passwordHash: passwordHash,
@@ -23,8 +36,14 @@ router.post('/sign-up', (req, res, next) => {
       })
       return user
     })
-    .then((user) => res.status(201).json(user))
-    .catch(next)
+    .then((user) => res.sendStatus(201))
+    .catch((error) => {
+      if (error.message === 'breakPromise') {
+        next()
+      } else {
+        throw error
+      }
+    })
 })
 
 router.post('/sign-in', (req, res, next) => {
