@@ -13,9 +13,11 @@ app.use(requestLogger)
 
 const userRoutes = require('./routes/userRoutes')
 const gameRoutes = require('./routes/gameRoutes')
+const collectionRoutes = require('./routes/collectionRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 app.use(userRoutes)
 app.use('/games', gameRoutes)
+app.use('/collections', collectionRoutes)
 app.use('/admin', adminRoutes)
 
 app.listen(ENV.EXT_PORT, () => console.log(`listening on port ${ENV.EXT_PORT}`))
