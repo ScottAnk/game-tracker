@@ -3,6 +3,7 @@ const express = require('express')
 const Game = require('../model/game')
 const Collection = require('../model/collection')
 const { requireToken } = require('../lib/auth')
+const check404 = require('../lib/error')
 
 const router = express.Router()
 
@@ -41,18 +42,18 @@ router.get('/:id', requireToken, (req, res, next) => {
 
 //UPDATE
 router.patch('/:id', requireToken, (req, res, next) => {
-  Game.findByIdAndUpdate(req.params.id, req.body.game, {
+  Game.findOneAndUpdate({_id: req.params.id, ownerId: req.user._id}, req.body.game, {
     returnDocument: 'after',
     runValidators: true,
   })
-    .then((updatedGame) => res.status(200).json({ game: updatedGame }))
+    .then((updatedGame) => res.sendStatus(205))
     .catch(next)
 })
 
 //DELETE
 router.delete('/:id', requireToken, (req, res, next) => {
   // TODO send back the results of a new index on the collection or redirect to the main page if I have a persistent login
-  Game.findByIdAndDelete(req.params.id).then(res.sendStatus(205))
+  Game.findOneAndDelete({_id: req.params.id, ownerId: req.user._id}).then((game) => res.sendStatus(205))
 })
 
 module.exports = router
