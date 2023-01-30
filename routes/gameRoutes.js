@@ -10,14 +10,14 @@ const router = express.Router()
 router.post('/', requireToken, (req, res, next) => {
   Collection.findOne({ ownerId: req.user._id })
     .then((collection) => {
-    Game.create(req.body.game)
-      .then((game) => {
-        collection.games.push(game._id)
-        return collection.save()}
-      )
-      .then(res.sendStatus(205))
-      .catch(next)
-  })
+      return Game.create(req.body.game)
+        .then((game) => {
+          collection.games.push(game._id)
+          return collection.save()
+        })
+        .then((collection) => res.sendStatus(205))
+    })
+    .catch(next)
 })
 
 //INDEX
@@ -43,6 +43,7 @@ router.get('/:id', requireToken, (req, res, next) => {
 router.patch('/:id', requireToken, (req, res, next) => {
   Game.findByIdAndUpdate(req.params.id, req.body.game, {
     returnDocument: 'after',
+    runValidators: true,
   })
     .then((updatedGame) => res.status(200).json({ game: updatedGame }))
     .catch(next)

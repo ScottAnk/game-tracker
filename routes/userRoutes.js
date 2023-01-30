@@ -13,13 +13,13 @@ router.post('/sign-up', (req, res, next) => {
     !req.body.credentials.password ||
     !req.body.credentials.userName
   ) {
-    res.status(400).json({ error: 'sign up requires username and password' })
+    res.sendStatus(400)
     throw new Error('breakPromise')
   }
   User.findOne({ userName: req.body.credentials.userName })
     .then((user) => {
       if (user) {
-        res.status(409).json({ error: 'that username already exists' })
+        res.sendStatus(409)
         throw new Error('breakPromise')
       }
     })
