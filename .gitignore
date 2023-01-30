@@ -1,1 +1,3 @@
 node_modules
+config/env.js
+config/connectionNotes.md
