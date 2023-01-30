@@ -9,6 +9,7 @@ const router = express.Router()
 
 //CREATE
 router.post('/', requireToken, (req, res, next) => {
+  req.body.game.ownerId = req.user._id
   Collection.findOne({ ownerId: req.user._id })
     .then((collection) => {
       return Game.create(req.body.game)
@@ -16,7 +17,7 @@ router.post('/', requireToken, (req, res, next) => {
           collection.games.push(game._id)
           return collection.save()
         })
-        .then((collection) => res.sendStatus(205))
+        .then(() => res.sendStatus(205))
     })
     .catch(next)
 })
@@ -36,16 +37,22 @@ router.get('/', requireToken, async (req, res, next) => {
 //SHOW
 router.get('/:id', requireToken, (req, res, next) => {
   Game.findById(req.params.id)
+    .then(check404)
     .then((game) => res.status(200).json({ game: game }))
     .catch(next)
 })
 
 //UPDATE
 router.patch('/:id', requireToken, (req, res, next) => {
-  Game.findOneAndUpdate({_id: req.params.id, ownerId: req.user._id}, req.body.game, {
-    returnDocument: 'after',
-    runValidators: true,
-  })
+  Game.findOneAndUpdate(
+    { _id: req.params.id, ownerId: req.user._id },
+    req.body.game,
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    }
+  )
+    .then(check404)
     .then((updatedGame) => res.sendStatus(205))
     .catch(next)
 })
@@ -53,7 +60,10 @@ router.patch('/:id', requireToken, (req, res, next) => {
 //DELETE
 router.delete('/:id', requireToken, (req, res, next) => {
   // TODO send back the results of a new index on the collection or redirect to the main page if I have a persistent login
-  Game.findOneAndDelete({_id: req.params.id, ownerId: req.user._id}).then((game) => res.sendStatus(205))
+  Game.findOneAndDelete({ _id: req.params.id, ownerId: req.user._id })
+    .then(check404)
+    .then((game) => res.sendStatus(205))
+    .catch(next)
 })
 
 module.exports = router

@@ -19,6 +19,10 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
 })
 
 const Game = mongoose.model('Game', gameSchema)

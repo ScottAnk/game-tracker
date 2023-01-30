@@ -10,8 +10,7 @@ router.put('/reset-to-dev', requireToken, (req, res, next) => {
     res.sendStatus(403)
   }
   resetDatabase()
-    .then(fillDefaultCollections)
-    .then(res.sendStatus(201))
+    .then(() => res.sendStatus(201))
     .catch(next)
 })
 module.exports = router
