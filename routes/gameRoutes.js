@@ -10,12 +10,16 @@ const router = express.Router()
 //CREATE
 router.post('/', requireToken, (req, res, next) => {
   req.body.game.ownerId = req.user._id
-  Collection.findOne({ ownerId: req.user._id })
-    .then((collection) => {
+  Collection.find({ _id: { $in: req.body.collections }, ownerId: req.user._id })
+    .then((collections) => {
       return Game.create(req.body.game)
         .then((game) => {
-          collection.games.push(game._id)
-          return collection.save()
+          const saveOperations = []
+          for (let i = 0; i < collections.length; i++) {
+            collections[i].games.push(game._id)
+            saveOperations[i] = collections[i].save()
+          }
+          return Promise.all(saveOperations)
         })
         .then(() => res.sendStatus(205))
     })
@@ -27,6 +31,8 @@ router.get('/', requireToken, async (req, res, next) => {
   let gameFilter = {}
   if (req.query.collection) {
     const collection = await Collection.findById(req.query.collection)
+      .then(check404)
+      .catch(next)
     gameFilter = { _id: { $in: collection.games } }
   }
   Game.find(gameFilter)
