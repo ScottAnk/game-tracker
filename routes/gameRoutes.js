@@ -59,16 +59,15 @@ router.patch('/:id', requireToken, (req, res, next) => {
     }
   )
     .then(check404)
-    .then((updatedGame) => res.sendStatus(205))
+    .then(() => res.sendStatus(205))
     .catch(next)
 })
 
 //DELETE
 router.delete('/:id', requireToken, (req, res, next) => {
-  // TODO send back the results of a new index on the collection or redirect to the main page if I have a persistent login
   Game.findOneAndDelete({ _id: req.params.id, ownerId: req.user._id })
     .then(check404)
-    .then((game) => res.sendStatus(205))
+    .then(() => res.sendStatus(205))
     .catch(next)
 })
 
