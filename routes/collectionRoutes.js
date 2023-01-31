@@ -15,7 +15,7 @@ router.get('/', requireToken, (req, res, next) => {
 router.post('/', requireToken, (req, res, next) => {
   req.body.collection.ownerId = req.user._id
   Collection.create(req.body.collection)
-    .then(() => res.sendStatus(205))
+    .then((collection) => res.status(200).json({ collection: collection }))
     .catch(next)
 })
 
