@@ -67,6 +67,7 @@ router.patch('/:id', requireToken, (req, res, next) => {
 router.delete('/:id', requireToken, (req, res, next) => {
   Game.findOneAndDelete({ _id: req.params.id, ownerId: req.user._id })
     .then(check404)
+    .then((game) => Collection.updateMany({}, { $pull: { games: game._id } }))
     .then(() => res.sendStatus(205))
     .catch(next)
 })
