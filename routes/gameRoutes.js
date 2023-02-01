@@ -10,12 +10,16 @@ const router = express.Router()
 //CREATE
 router.post('/', requireToken, (req, res, next) => {
   req.body.game.ownerId = req.user._id
-  Collection.findOne({ ownerId: req.user._id })
-    .then((collection) => {
+  Collection.find({ _id: { $in: req.body.collections }, ownerId: req.user._id })
+    .then((collections) => {
       return Game.create(req.body.game)
         .then((game) => {
-          collection.games.push(game._id)
-          return collection.save()
+          const saveOperations = []
+          for (let i = 0; i < collections.length; i++) {
+            collections[i].games.push(game._id)
+            saveOperations[i] = collections[i].save()
+          }
+          return Promise.all(saveOperations)
         })
         .then(() => res.sendStatus(205))
     })
@@ -27,6 +31,8 @@ router.get('/', requireToken, async (req, res, next) => {
   let gameFilter = {}
   if (req.query.collection) {
     const collection = await Collection.findById(req.query.collection)
+      .then(check404)
+      .catch(next)
     gameFilter = { _id: { $in: collection.games } }
   }
   Game.find(gameFilter)
@@ -53,16 +59,16 @@ router.patch('/:id', requireToken, (req, res, next) => {
     }
   )
     .then(check404)
-    .then((updatedGame) => res.sendStatus(205))
+    .then(() => res.sendStatus(205))
     .catch(next)
 })
 
 //DELETE
 router.delete('/:id', requireToken, (req, res, next) => {
-  // TODO send back the results of a new index on the collection or redirect to the main page if I have a persistent login
   Game.findOneAndDelete({ _id: req.params.id, ownerId: req.user._id })
     .then(check404)
-    .then((game) => res.sendStatus(205))
+    .then((game) => Collection.updateMany({}, { $pull: { games: game._id } }))
+    .then(() => res.sendStatus(205))
     .catch(next)
 })
 

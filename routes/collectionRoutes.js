@@ -12,4 +12,11 @@ router.get('/', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+router.post('/', requireToken, (req, res, next) => {
+  req.body.collection.ownerId = req.user._id
+  Collection.create(req.body.collection)
+    .then((collection) => res.status(200).json({ collection: collection }))
+    .catch(next)
+})
+
 module.exports = router
