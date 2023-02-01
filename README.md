@@ -1,50 +1,54 @@
-# game-tracker  
+# Game Tracker
 
-This website allows users to quickly set up a profile and create a digital copy of their boardgame collection. This can be helpful when planning boardgame nights, or as a fun way to show off your collection to friends.
+Game Tracker is a quick way to make a digital copy of your boardgame collection (or whatever kinds of games you like, I won't tell). Accessible anywhere you go, this digital library of games is essential when planning boardgame nights and is an easy way to show off your collection to friends.
 
-# User Stories  
+# Technologies
 
-## MVP  
+Game Tracker's backend is built with the following tools:
 
-- As a user I need to be able to sign in  
-- As a user I need to be able to sign out  
-- As a user I need to be able to see my game collection  
-- As a user I need to be able to add games to my collection  
-- As a user I need to be able to remove games from my collection  
-- As a user I need to be able to modify the details of games in my collection  
-- As a user I want a pleasing aesthetic to the collection  
+- MongoDB (mongoose)
+- Express
+- Node
+- Passport
+- jsonwebtoken
 
-## Version 2  
+# Entity Relationships
 
-- As a user I need a cancel button on create and update screens because I want to be able to back out  
-- As a user I need a confirmation prompt before deleting games because it's too easy to accidentally click one button  
-- As a user I need to be able to create multiple collections for organization  
-- As a user I need to be able to share a read-only link to my collections so I can show my collection to friends  
-- As a user I need to be able to access read-only links without signing in so that my friends don't need an account to see my collection  
+Game Tracker's database relies on three models User, Collection, and Game.  
+- User stores login information.  
+- Collection has an owner field that points to a user and an array of references to Game documents. Many collections can belong to the same owner.  
+- Game stores the details of a game, as well as the User that created it. In version 2, game ownership could be established through collection properties, but version 3 is expected to allow users to browse others' games and add them to collections so Game includes the ownerId reference to establish permissions later in development.  
+![MVP-entity-relationship-diagram](./readme-images/V2-ERD.png)
 
-## Version 3  
-
-- As a user I need to be able to customize the colors of each game  
-- As a user I need to be able to add session notes to each game  
-- As a user I need to be able to filter my game collection    
-- As a user I need to be able to search a list of pre-defined games because I don't want to define all my games myself  
-
-# Entity Relationships  
-
-In order to satisfy the requirements of the MVP user stories, the app will require three database models User, Collection, and Game. User stores login information and is the identifier to which collections will be referenced. Collection has an owner field that points to a user and an array of references to Game documents. Game stores the details of the game. Strictly speaking, MVP doesn't require a Collection model, but this is futureproofing with the expectation that multiple collections per user will be implemented. In the MVP, for each User created a Collection will also be created and linked automatically.  
-![MVP-entity-relationship-diagram](/readme-images/MVP-entity-relationship-diagram.png)  
+# Routes
 
 
-# Layout  
+| Name              | Path                | Verb   | Purpose                                                                                                                                                    |
+| :---------------- | :------------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sign up           | /sign-up            | POST   | Attempt to create user profile                                                                                                                             |
+| Log in            | /sign-in            | POST   | Pass user credentials to receive authentication token                                                                                                      |
+| Create game       | /games              | POST   | Create a new game attached to sign-in user and any collections listed in request body                                                                      |
+| Index games       | /games              | GET    | List all games. Include query key `collection` to filter results                                                                                           |
+| Show game         | /games/:id          | GET    | Get details of one game                                                                                                                                    |
+| Update game       | /games/:id          | PATCH  | Change details of one game. Request must include auth token of game's owner                                                                                |
+| Delete game       | /games/:id          | DELETE | Delete one game. Request must include auth token of game's owner                                                                                           |
+| Index collections | /collections        | GET    | Get all collections of logged-in user                                                                                                                      |
+| Create collection | /collections        | POST   | Create a new collection for logged-in user                                                                                                                 |
+| Reset             | /admin/reset-to-dev | PUT    | Resets database to known development condition. It is only authorized for the Admin user, but it's should probably still be removed from deployed servers. |
+|                   |                     |        |                                                                                                                                                            |
 
-The MVP will not support any un-authenticated access. When users first visit the site, they will be invited to create an account or sign in to an existing account.  
-![MVP landing page](/readme-images/MVP-landing-page.png)  
 
-Once signed in, users can see and edit their collection. The majority of the screen is filled with the collection, with some action buttons in the sidebar.  
-![MVP collection View](/readme-images/MVP-collection-view.png)  
+# Next Steps
 
-The user can click on a game's preview to see details, edit properties, or delete it. In the MVP, the only way out of this screen is to update the game without changing any details. Adding a cancel button to this view is the first change planned for version 2.  
-![MVP update/delete view](/readme-images/MVP-update-delete-view.png)  
+Game Tracker is between it's MVP and Version 2 milestones. The user stories below lay out the future plans for Game Tracker, and are organized roughly in order of priority.
 
-The user can click the "new game" button to create a new game for their collection. After adding details, the create button in this view will create the database entry and return the user to the (updated) collection view.  
-![MVP create view](/readme-images/MVP-create-view.png)
+## Version 2
+
+- As a user I need to be able to share a read-only link to my collections so I can show my collection to friends
+- As a user I need to be able to access read-only links without signing in so that my friends don't need an account to see my collection
+
+## Version 3
+
+- As a user I need to be able to search a list of pre-defined games because I don't want to define all my games myself
+- As a user I need to be able to add cover pictures to games
+- As a user I need to be able to add session notes to each game
