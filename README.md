@@ -2,6 +2,8 @@
 
 Game Tracker is a quick way to make a digital copy of your boardgame collection (or whatever kinds of games you like, I won't tell). Accessible anywhere you go, this digital library of games is essential when planning boardgame nights and is an easy way to show off your collection to friends.
 
+You're looking at the server repository, but if you'd like to see the Game Tracker in action, the client is [hosted here.](https://game-tracker-znto.onrender.com/)
+
 # Technologies
 
 Game Tracker's backend is built with the following tools:
@@ -14,14 +16,14 @@ Game Tracker's backend is built with the following tools:
 
 # Entity Relationships
 
-Game Tracker's database relies on three models User, Collection, and Game.  
-- User stores login information.  
-- Collection has an owner field that points to a user and an array of references to Game documents. Many collections can belong to the same owner.  
+Game Tracker's database relies on three models User, Collection, and Game.
+
+- User stores login information.
+- Collection has an owner field that points to a user and an array of references to Game documents. Many collections can belong to the same owner.
 - Game stores the details of a game, as well as the User that created it. In version 2, game ownership could be established through collection properties, but version 3 is expected to allow users to browse others' games and add them to collections so Game includes the ownerId reference to establish permissions later in development.  
-![MVP-entity-relationship-diagram](./readme-images/V2-ERD.png)
+  ![MVP-entity-relationship-diagram](./readme-images/V2-ERD.png)
 
 # Routes
-
 
 | Name              | Path                | Verb   | Purpose                                                                                                                                                    |
 | :---------------- | :------------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,7 +38,6 @@ Game Tracker's database relies on three models User, Collection, and Game.
 | Create collection | /collections        | POST   | Create a new collection for logged-in user                                                                                                                 |
 | Reset             | /admin/reset-to-dev | PUT    | Resets database to known development condition. It is only authorized for the Admin user, but it's should probably still be removed from deployed servers. |
 |                   |                     |        |                                                                                                                                                            |
-
 
 # Next Steps
 
