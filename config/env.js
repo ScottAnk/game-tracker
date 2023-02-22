@@ -7,6 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'development-secret'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'lol great password'
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://127.0.0.1:5500'
 
+console.log('database url: ', DATABASE_URL)
 module.exports = {
   EXT_PORT,
   DATABASE_URL,
