@@ -7,7 +7,7 @@ const requestLogger = require('./lib/requestLogger')
 
 const app = express()
 
-app.use(cors({origin: 'http://127.0.0.1:5500'}))
+app.use(cors({ origin: ENV.CORS_ORIGIN }))
 app.use(express.json())
 app.use(requestLogger)
 
