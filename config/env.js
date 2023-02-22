@@ -1,6 +1,7 @@
 const EXT_PORT = 8000
 
-const DATABASE_URL = 'mongodb://localhost/game-tracker-dev'
+const DATABASE_URL =
+  process.env.DATABASE_URL || 'mongodb://localhost/game-tracker-dev'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'development-secret'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'lol great password'
